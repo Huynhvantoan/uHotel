@@ -1,0 +1,180 @@
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+
+android {
+  def globalConfiguration = rootProject.extensions.getByName("ext")
+
+  compileSdkVersion globalConfiguration.getAt("androidCompileSdkVersion")
+  buildToolsVersion globalConfiguration.getAt("androidBuildToolsVersion")
+
+  defaultConfig {
+    minSdkVersion globalConfiguration.getAt("androidMinSdkVersion")
+    targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
+
+    applicationId globalConfiguration.getAt("androidApplicationId")
+    versionCode globalConfiguration.getAt("androidVersionCode")
+    versionName globalConfiguration.getAt("androidVersionName")
+    multiDexEnabled true
+    vectorDrawables.useSupportLibrary = true
+  }
+  signingConfigs {
+    Key {
+      try {
+        storeFile file(globalConfiguration.getAt("keystore"))
+        storePassword globalConfiguration.getAt("keystorePass")
+        keyAlias globalConfiguration.getAt("alias")
+        keyPassword globalConfiguration.getAt("aliasPass")
+      }
+      catch (ignored) {
+        throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+      }
+    }
+  }
+  buildTypes {
+    release {
+      signingConfig signingConfigs.Key
+      minifyEnabled true
+      shrinkResources true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+    debug {
+      debuggable true
+    }
+//    applicationVariants.all { variant ->
+//       configApkFileName(variant, defaultConfig)
+//    }
+  }
+  packagingOptions {
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/rxjava.properties'
+  }
+  lintOptions {
+    quiet true
+    abortOnError false
+    ignoreWarnings true
+    disable 'MissingTranslation'
+    disable 'InvalidPackage'            //Some libraries have issues with this.
+    disable 'OldTargetApi'
+    //Lint gives this warning but SDK 20 would be Android L Beta.
+    disable 'IconDensities'             //For testing purpose. This is safe to remove.
+    disable 'IconMissingDensityFolder'  //For testing purpose. This is safe to remove.
+  }
+  dexOptions {
+    javaMaxHeapSize "4g" // used by the out-of-process Jack, ignored if running in-process
+  }
+  sourceSets {
+    main {
+      res.srcDirs = [
+          'src/main/res-main',
+          file('src/main/res-screen')
+              .listFiles()
+              .each { res.srcDirs += it.path }
+      ]
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+ /* configurations {
+      compile.exclude group: 'io.reactivex:rxjava', module: 'rxjava'
+      compile.exclude group: 'io.reactivex:rxandroid', module: 'rxandroid'
+  }*/
+}
+
+dependencies {
+  def supportDependencies      = rootProject.ext.supportDependencies
+  def injectDependencies       = rootProject.ext.injectDependencies
+  def networkDependencies      = rootProject.ext.networkDependencies
+  def appDependencies          = rootProject.ext.appDependencies
+  def developmentDependencies  = rootProject.ext.developmentDependencies
+
+  compile supportDependencies.supportCompat
+  compile supportDependencies.supportDesign
+  compile supportDependencies.supportRecyclerView
+  compile supportDependencies.supportCardView
+  compile supportDependencies.supportPalette
+  compile supportDependencies.fragmentation
+  compile supportDependencies.mutidex
+
+  //----- Butterknife
+  compile supportDependencies.butterKnife
+  annotationProcessor supportDependencies.butterknifeCompiler
+
+  //----- Dagger
+  compile injectDependencies.dagger
+  annotationProcessor injectDependencies.daggerCompiler
+
+  //----- Rx
+  compile injectDependencies.rxjava
+  compile injectDependencies.rxandroid
+  compile injectDependencies.rxbinding
+
+  //Load Image
+  compile networkDependencies.glide
+  //annotationProcessor networkDependencies.glideCompiler
+
+  //----- Network
+  compile networkDependencies.okHttp
+  compile networkDependencies.retrofitGsonConverter
+  compile networkDependencies.retrofitRxJavaAdapter
+  compile networkDependencies.reactivenetwork
+  compile (networkDependencies.retrofit){
+    exclude module: 'okhttp'
+  }
+  compile (networkDependencies.okHttpLogging) {
+    exclude group: 'org.json', module: 'json'
+    exclude module: 'okhttp'
+  }
+
+  //App
+  compile appDependencies.baseRecyclerView
+  compile appDependencies.exoPlayer
+  compile appDependencies.exoPlayerOkhttp
+  compile appDependencies.slider
+  compile (appDependencies.statusBarCompat) {
+    exclude group: 'com.android.support'
+  }
+  //developmentDependencies
+  /*debugCompile   developmentDependencies.leakCanary
+  releaseCompile developmentDependencies.leakCanaryRelease
+  testCompile    developmentDependencies.leakCanaryRelease
+  compile   developmentDependencies.blockCanary*/
+  /*releaseCompile developmentDependencies.blockCanaryExRelease
+  testCompile    developmentDependencies.blockCanaryExRelease*/
+}
+/*
+@SuppressWarnings("GroovyAssignabilityCheck")
+def configApkFileName(variant, defaultConfig) {
+  variant.outputs.each { output ->
+    if (output.outputFile != null && output.outputFile.name.endsWith('.apk')) {
+      def name = "${rootDir}/apk/Debug.apk"
+      output.outputFile = file(name)
+    }
+  }
+}*/
+//  variant.outputs.each { output ->
+//    if (variant.buildType.name == android.buildTypes.debug.name) {
+//      if (output.zipAlign) {
+//        def file = output.outputFile
+//        output.outputFile = new File(file.parentFile, variant.buildType.name + "_v"
+//            + defaultConfig.versionName + "_"
+//            + defaultConfig.versionCode
+//            + ".apk")
+//      }
+//    } else if (variant.buildType.name == android.buildTypes.release.name) {
+//      if (output.zipAlign) {
+//        def file = output.outputFile
+//        output.outputFile = new File(file.parentFile, "uHotel" + variant.buildType.name
+//            + "_v" + defaultConfig.versionName + "_"
+//            + defaultConfig.versionCode
+//            + ".apk")
+//      }
+//    }
+//  }
+

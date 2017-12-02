@@ -1,0 +1,27 @@
+apply from: 'buildsystem/library.gradle'
+apply from: 'buildsystem/ci.gradle'
+apply from: 'buildsystem/signing.gradle'
+
+buildscript {
+    repositories {
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.google.com' }
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha6'
+        classpath "io.realm:realm-gradle-plugin:3.4.0"
+    }
+}
+
+allprojects {
+    ext {
+        androidApplicationId = 'com.acuteksolutions.uhotel'
+        androidVersionCode = 1
+        androidVersionName = "1.0"
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

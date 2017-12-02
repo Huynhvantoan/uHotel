@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="rippelColor">#FFFFFF</color>
+  <color name="primary_dark">#00000000</color>
+  <color name="backgroundPrimary">#FFFFFF</color>
+  <color name="colorPrimary">#FFFFFF</color>
+  <color name="colorPrimaryDark">#FFFFFF</color>
+  <color name="colorAccent">#FFFFFF</color>
+  <color name="background_item">#000000</color> <!-- 12% -->
+  <color name="white">#FFFFFF</color>
+  <color name="black">#000000</color>
+  <color name="transparent">#00000000</color>
+  <color name="transparent10">#11000000</color>
+  <color name="transparent20">#22000000</color>
+  <color name="transparent40">#44000000</color>
+  <color name="transparent60">#ce000000</color>
+  <color name="black_overlay">#c8000000</color>
+  <color name="grey">#737C81</color>
+  <color name="bg_item_select">#e4960c</color>
+  <color name="black_background">#CC000000</color>
+  <color name="dark">#b3b3b3</color>
+  <!--HOME-->
+  <color name="yellow">#eaa903</color>
+  <color name="red">#ff000d</color>
+
+  <!--TAB-->
+  <color name="tab_background">#1d1d1d</color>
+  <color name="tab_background_child">#222632</color>
+  <color name="tab_select">#e4960c</color>
+
+  <!--ROOM CONTROL-->
+  <color name="room_presets_text">#5f5348</color>
+  <color name="room_bg_tab">#372c20</color>
+  <color name="room_bg_tab_focus">#f89c09</color>
+  <color name="room_bg_track">#9c520b</color>
+  <color name="color_arc">@android:color/white</color>
+  <color name="color_text">@android:color/white</color>
+  <color name="color_progress">#f89c09</color>
+  <color name="color_bg_progress">#2e2d2d</color>
+  <color name="status_item_off">#6B6464</color>
+  <color name="status_item_on">@color/white</color>
+
+  <!--CONCIERGE PAGE-->
+  <color name="parental_text">#2d2b2a</color>
+  <color name="menu_left">#393025</color>
+  <color name="bg_item_choose">#e4960c</color>
+  <color name="concierge_right_bussiness_promotions_txtcolor">#8B8B8B</color>
+  <color name="nav_menu_background">#c7c7c7</color>
+</resources>
